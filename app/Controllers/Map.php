@@ -7,7 +7,7 @@ class Map extends BaseController
 {
     public function index()
     {
-        return view('map_view');
+        return view('main/peta');
     }
 
     public function getMarkers()
@@ -21,7 +21,6 @@ class Map extends BaseController
         return $this->response->setJSON($markers);
     }
 
-
     public function getAmenitiesList()
     {
         $model = new MapModel();
@@ -29,5 +28,4 @@ class Map extends BaseController
 
         return $this->response->setJSON($data);
     }
-
 }
