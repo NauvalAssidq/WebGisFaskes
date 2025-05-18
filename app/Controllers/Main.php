@@ -10,12 +10,12 @@ class Main extends BaseController
         return view('main/index');
     }
     
-    public function peta()
+    public function map()
     {
         return view('main/map');
     }
     
-    public function daftarFaskes()
+    public function healthcare_list()
     {
         return view('main/daftar_faskes');
     }

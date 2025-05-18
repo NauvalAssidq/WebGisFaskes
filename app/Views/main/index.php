@@ -19,8 +19,8 @@
     <!-- Include Navbar -->
     <?= $this->include('main/layout/navbar') ?>
 
-    <!-- Hero Section -->
-    <section class="hero-pattern py-16 md:py-24">
+    <!-- Hero -->
+    <section class="py-16 md:py-24 bg-cover bg-center bg-no-repeat" style="background-image: url('<?= base_url('assets/images/bg-hero.svg') ?>');">
         <div class="max-w-6xl mx-auto px-4">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
                 <div>
@@ -28,18 +28,14 @@
                     <h2 class="text-xl md:text-2xl font-medium text-gray-700 mb-6">Pemetaan Fasilitas Kesehatan di Banda Aceh</h2>
                     <p class="text-gray-600 mb-8">Temukan lokasi rumah sakit, puskesmas, klinik, apotek, dan fasilitas kesehatan lainnya di Banda Aceh dengan mudah melalui platform pemetaan geografis kami.</p>
                     <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="/peta" class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-700 transition duration-300 text-center">Lihat Peta</a>
+                        <a href="/map" class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-700 transition duration-300 text-center">Lihat Peta</a>
                         <a href="/daftar-faskes" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-50 transition duration-300 text-center">Daftar Fasilitas</a>
                     </div>
-                </div>
-                <div class="rounded-lg shadow-lg overflow-hidden">
-                    <img src="/assets/images/healthcare-map.jpg" alt="Peta Fasilitas Kesehatan" class="w-full" onerror="this.src='/api/placeholder/600/400';this.onerror=null;">
-                </div>
             </div>
         </div>
     </section>
 
-    <!-- Search Section -->
+    <!-- Search -->
     <section class="py-12 bg-white">
         <div class="max-w-6xl mx-auto px-4">
             <div class="text-center mb-8">
@@ -47,24 +43,37 @@
                 <p class="text-gray-600">Temukan fasilitas kesehatan terdekat sesuai kebutuhan Anda</p>
             </div>
             
-            <!-- Filter bar -->
+            <!-- Updated Filter Bar -->
             <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 border border-gray-300 p-4 rounded-lg shadow-sm bg-gray-50">
                 <div class="w-full sm:w-5/12">
                     <input type="text" id="searchInput"
                         class="w-full border border-gray-400 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Cari nama fasilitas..." />
+                        placeholder="Cari nama fasilitas...">
                 </div>
-                <div class="w-full sm:w-5/12">
-                    <select id="amenityFilter"
-                        class="w-full border border-gray-400 px-3 py-2 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Semua Jenis Fasilitas --</option>
-                    </select>
+                
+                <div class="w-full sm:w-5/12" id="amenityFiltersContainer">
+                    <div class="flex gap-2 mb-2 items-center">
+                        <select class="amenity-filter w-full border border-gray-400 px-3 py-2 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Semua Jenis Fasilitas --</option>
+                        </select>
+                        <button type="button" onclick="addAmenityFilter()" 
+                                class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+                            <span class="material-icons text-xl">add</span>
+                        </button>
+                    </div>
                 </div>
-                <button onclick="loadMarkers()"
-                    class="w-full sm:w-2/12 flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                    <span class="material-icons">search</span>
-                    Cari
-                </button>
+
+                <div class="w-full sm:w-2/12 flex gap-2">
+                    <button onclick="loadMarkers()"
+                        class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        <span class="material-icons">search</span>
+                        Cari
+                    </button>
+                    <button onclick="clearFilters()"
+                        class="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">
+                        <span class="material-icons">refresh</span>
+                    </button>
+                </div>
             </div>
             
             <!-- Map -->

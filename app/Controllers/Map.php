@@ -7,16 +7,16 @@ class Map extends BaseController
 {
     public function index()
     {
-        return view('main/peta');
+        return view('main/map_view');
     }
 
     public function getMarkers()
-    {
+{
         $search = $this->request->getGet('search');
-        $amenity = $this->request->getGet('amenity');
+        $amenities = $this->request->getGet('amenities');
 
         $model = new MapModel();
-        $markers = $model->searchFilteredAmenities($search, $amenity);
+        $markers = $model->searchFilteredAmenities($search, $amenities);
 
         return $this->response->setJSON($markers);
     }

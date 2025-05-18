@@ -74,65 +74,6 @@
         </div>
     </main>
 
-    <!-- Include Footer -->
     <?= $this->include('main/layout/footer') ?>
-
-    <script>
-        // Tambahan untuk memastikan bahwa marker menggunakan warna yang sesuai dengan jenis fasilitas
-        function getMarkerColor(amenity) {
-            switch(amenity.toLowerCase()) {
-                case 'rumah sakit':
-                    return 'red';
-                case 'puskesmas':
-                    return 'blue';
-                case 'klinik':
-                    return 'green';
-                case 'apotek':
-                    return 'purple';
-                default:
-                    return 'gray';
-            }
-        }
-
-        // Override fungsi loadMarkers untuk menambahkan warna marker sesuai jenis
-        function loadMarkers() {
-            const keyword = document.getElementById('searchInput').value;
-            const amenity = document.getElementById('amenityFilter').value;
-
-            fetch(`/map/getMarkers?search=${encodeURIComponent(keyword)}&amenity=${encodeURIComponent(amenity)}`)
-                .then(res => res.json())
-                .then(data => {
-                    clearMarkers();
-
-                    data.forEach(item => {
-                        const markerColor = getMarkerColor(item.amenity);
-                        
-                        // Custom marker icon dengan warna sesuai jenis fasilitas
-                        const markerIcon = L.divIcon({
-                            className: 'custom-marker',
-                            html: `<span class="material-icons" style="color: ${markerColor};">place</span>`,
-                            iconSize: [24, 24],
-                            iconAnchor: [12, 24],
-                            popupAnchor: [0, -24]
-                        });
-                        
-                        const marker = L.marker([item.lat, item.lng], {icon: markerIcon}).addTo(map);
-                        marker.bindTooltip(item.amenity, { direction: 'top' });
-                        marker.bindPopup(`
-                            <strong>${item.name}</strong><br>
-                            <span class="text-gray-600">${item.amenity}</span><br>
-                            ${item.address ? `<small>${item.address}</small>` : ''}
-                        `);
-                        markers.push(marker);
-                    });
-
-                    // Auto-zoom untuk melihat semua marker
-                    if (markers.length > 0) {
-                        const group = new L.featureGroup(markers);
-                        map.fitBounds(group.getBounds().pad(0.1));
-                    }
-                });
-        }
-    </script>
 </body>
 </html>
