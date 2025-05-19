@@ -23,7 +23,20 @@ class Dashboard extends Controller
             'username' => $session->get('username'),
             'email'    => $session->get('email'),
             'groupedFacilities' => $model->getFacilitiesGroupedByAmenity()
+        ]);
+    }
 
+    public function map()
+    {
+        $session = session();
+
+        if (!$session->get('logged_in')) {
+            return redirect()->to('/login')->with('error', 'You must log in first.');
+        }
+
+        return view('dashboard/map', [
+            'username' => $session->get('username'),
+            'email'    => $session->get('email'),
         ]);
     }
 }

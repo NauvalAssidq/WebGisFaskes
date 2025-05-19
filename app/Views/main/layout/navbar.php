@@ -1,4 +1,4 @@
-<nav class="bg-white border-b border-gray-300 shadow-sm">
+<nav class="sticky top-0 bg-white border-b border-gray-300 shadow-sm" style="z-index: 2000;">
     <div class="max-w-6xl mx-auto px-4">
         <div class="flex justify-between h-16">
             <div class="flex items-center">

@@ -20,9 +20,9 @@
     <?= $this->include('main/layout/navbar') ?>
 
     <!-- Hero -->
-    <section class="py-16 md:py-24 bg-cover bg-center bg-no-repeat" style="background-image: url('<?= base_url('assets/images/bg-hero.svg') ?>');">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <section class="h-[600px] py-16 md:py-24 bg-cover bg-center bg-no-repeat" style="background-image: url('<?= base_url('assets/images/bg-hero.svg') ?>');">
+        <div class="max-w-6xl mx-auto px-4 h-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center h-full">
                 <div>
                     <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-4">WebGIS Faskes</h1>
                     <h2 class="text-xl md:text-2xl font-medium text-gray-700 mb-6">Pemetaan Fasilitas Kesehatan di Banda Aceh</h2>
@@ -31,6 +31,7 @@
                         <a href="/map" class="bg-blue-600 text-white px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-700 transition duration-300 text-center">Lihat Peta</a>
                         <a href="/daftar-faskes" class="border border-blue-600 text-blue-600 px-6 py-3 rounded-md text-lg font-medium hover:bg-blue-50 transition duration-300 text-center">Daftar Fasilitas</a>
                     </div>
+                </div>
             </div>
         </div>
     </section>
@@ -77,67 +78,7 @@
             </div>
             
             <!-- Map -->
-            <?= $this->include('main/map_view') ?>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="py-12 bg-gray-100">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-gray-800 mb-2">Fitur Utama</h2>
-                <p class="text-gray-600">Beragam fitur untuk memudahkan pencarian fasilitas kesehatan</p>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 mb-4">
-                        <span class="material-icons">place</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Pemetaan Interaktif</h3>
-                    <p class="text-gray-600">Visualisasi lokasi fasilitas kesehatan dengan peta interaktif dan mudah digunakan.</p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 mb-4">
-                        <span class="material-icons">search</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Pencarian Terfokus</h3>
-                    <p class="text-gray-600">Temukan fasilitas kesehatan berdasarkan nama, jenis, dan lokasi dengan mudah.</p>
-                </div>
-                
-                <div class="bg-white p-6 rounded-lg shadow-md">
-                    <div class="w-12 h-12 flex items-center justify-center bg-blue-100 rounded-full text-blue-600 mb-4">
-                        <span class="material-icons">info</span>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Informasi Lengkap</h3>
-                    <p class="text-gray-600">Akses informasi detail tentang setiap fasilitas kesehatan termasuk jam operasional.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Statistics Section -->
-    <section class="py-12 bg-blue-700 text-white">
-        <div class="max-w-6xl mx-auto px-4">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-                <div>
-                    <p class="text-4xl font-bold mb-2">20+</p>
-                    <p class="text-xl">Rumah Sakit</p>
-                </div>
-                <div>
-                    <p class="text-4xl font-bold mb-2">45+</p>
-                    <p class="text-xl">Puskesmas</p>
-                </div>
-                <div>
-                    <p class="text-4xl font-bold mb-2">100+</p>
-                    <p class="text-xl">Klinik</p>
-                </div>
-                <div>
-                    <p class="text-4xl font-bold mb-2">200+</p>
-                    <p class="text-xl">Apotek</p>
-                </div>
-            </div>
+            <?= $this->include('main/layout/map_view') ?>
         </div>
     </section>
 

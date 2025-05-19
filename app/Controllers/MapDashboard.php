@@ -3,11 +3,11 @@
 namespace App\Controllers;
 use App\Models\MapModel;
 
-class Map extends BaseController
+class MapDashboard extends BaseController
 {
     public function index()
     {
-        return view('main/layout/map_view');
+        return view('dashboard/layout/map_view');
     }
 
     public function getMarkers()

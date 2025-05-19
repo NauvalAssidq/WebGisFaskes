@@ -8,8 +8,9 @@ class MapModel extends Model
 {
     protected $table = 'health_facilities';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['name', 'amenity', 'geom'];
-
+    protected $allowedFields = [
+        'code', 'name', 'address', 'district', 'amenity', 'class', 'hospital_type', 'geom'
+    ];
     protected $returnType = 'array';
 
     public function getAllMarkers()
@@ -28,7 +29,7 @@ class MapModel extends Model
     {
         $builder = $this->db->table('health_facilities');
         $builder->where('geom IS NOT NULL');
-        $builder->select('id, name, amenity, ST_X(geom) AS lng, ST_Y(geom) AS lat');
+        $builder->select('id, code, name, address, district, amenity, class, hospital_type, ST_X(geom) AS lng, ST_Y(geom) AS lat');
 
         if ($search) {
             $builder->like('name', $search);
@@ -63,7 +64,7 @@ class MapModel extends Model
     public function getFacilitiesGroupedByAmenity()
     {
         $builder = $this->db->table('health_facilities');
-        $builder->select('id, name, amenity, ST_X(geom) AS lng, ST_Y(geom) AS lat');
+        $builder->select('id, code, name, address, district, amenity, class, hospital_type, ST_X(geom) AS lng, ST_Y(geom) AS lat');
         $builder->where('geom IS NOT NULL');
         $builder->where('amenity IS NOT NULL');
         $builder->where('amenity != ""');
@@ -79,5 +80,4 @@ class MapModel extends Model
 
         return $grouped;
     }
-
 }

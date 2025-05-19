@@ -23,31 +23,40 @@
             </div>
             
             <!-- Filter bar -->
-            <div class="flex flex-col sm:flex-row items-center gap-4 mb-6 border border-gray-300 p-4 rounded-lg shadow-sm bg-gray-50">
+            <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 border border-gray-300 p-4 rounded-lg shadow-sm bg-gray-50">
                 <div class="w-full sm:w-5/12">
-                    <label for="searchInput" class="block text-sm font-medium text-gray-700 mb-1">Nama Fasilitas</label>
                     <input type="text" id="searchInput"
                         class="w-full border border-gray-400 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Masukkan nama fasilitas..." />
+                        placeholder="Cari nama fasilitas...">
                 </div>
-                <div class="w-full sm:w-5/12">
-                    <label for="amenityFilter" class="block text-sm font-medium text-gray-700 mb-1">Jenis Fasilitas</label>
-                    <select id="amenityFilter"
-                        class="w-full border border-gray-400 px-3 py-2 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="">-- Semua Jenis Fasilitas --</option>
-                    </select>
+                
+                <div class="w-full sm:w-5/12" id="amenityFiltersContainer">
+                    <div class="flex gap-2 mb-2 items-center">
+                        <select class="amenity-filter w-full border border-gray-400 px-3 py-2 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">-- Semua Jenis Fasilitas --</option>
+                        </select>
+                        <button type="button" onclick="addAmenityFilter()" 
+                                class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
+                            <span class="material-icons text-xl">add</span>
+                        </button>
+                    </div>
                 </div>
-                <div class="w-full sm:w-2/12 pt-6">
+
+                <div class="w-full sm:w-2/12 flex gap-2">
                     <button onclick="loadMarkers()"
                         class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
                         <span class="material-icons">search</span>
                         Cari
                     </button>
+                    <button onclick="clearFilters()"
+                        class="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">
+                        <span class="material-icons">refresh</span>
+                    </button>
                 </div>
             </div>
             
             <!-- Map -->
-            <?= $this->include('main/map_view') ?>
+            <?= $this->include('main/layout/map_view') ?>
 
             <!-- Legend -->
             <div class="mt-6 bg-white p-4 rounded-lg shadow-sm border border-gray-300">

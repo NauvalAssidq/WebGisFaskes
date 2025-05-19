@@ -73,7 +73,16 @@
                 data.forEach(item => {
                     const marker = L.marker([item.lat, item.lng]).addTo(map);
                     marker.bindTooltip(item.amenity, { direction: 'top' });
-                    marker.bindPopup(`<strong>${item.name}</strong><br>${item.amenity}`);
+                    marker.bindPopup(`
+                        <strong>${item.name}</strong><br>
+                        ${item.amenity}<br>
+                        ${item.address}<br>
+                        ${item.district}<br>
+                        ${item.amenity === "Rumah Sakit" ? `
+                            Type: ${item.hospital_type}<br>
+                            Class: ${item.hospital_class}<br>
+                        ` : ''}
+                    `);
                     markers.push(marker);
                 });
             });
