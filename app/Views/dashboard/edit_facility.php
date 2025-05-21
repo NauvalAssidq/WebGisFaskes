@@ -38,6 +38,28 @@
             border: 1px solid #ddd;
             max-width: 250px;
         }
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e2e8f0;
+        }
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            top: 0;
+            right: 0;
+            min-width: 100%;
+            min-height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen">
@@ -50,7 +72,7 @@
                     <h1 class="text-3xl font-bold text-slate-800">Edit <?= esc($facility->amenity) ?></h1>
                     <p class="text-slate-500 mt-1">Silakan edit data <?= esc($facility->amenity) ?> di bawah ini.</p>
                 </div>
-                <a href="<?= site_url('dashboard') ?>"
+                <a href="<?= previous_url() ?>"
                    class="flex items-center gap-1 px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-all">
                     <span class="material-icons-round text-sm">arrow_back</span>
                     <span>Kembali</span>
@@ -71,33 +93,77 @@
             <?php endif ?>
 
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <!-- Form Section -->
                 <div class="lg:col-span-1">
                     <div class="bg-white p-6 rounded-xl border border-gray-200 shadow-sm transition-card">
                         <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
                             <span class="material-icons-round mr-2 text-blue-600">edit</span>
                             Data Fasilitas
                         </h2>
-                        <form method="post" action="<?= site_url('dashboard/edit/' . $facility->id) ?>" id="facilityForm">
+                        <form method="post" action="<?= site_url('dashboard/edit/' . $facility->id) ?>" id="facilityForm" enctype="multipart/form-data">
                             <?= csrf_field() ?>
+
+                            <div class="mb-6">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Foto Fasilitas</label>
+                                
+                                <?php if (!empty($facility->image)): ?>
+                                <div class="mb-3">
+                                    <img src="<?= base_url('public/uploads/' . $facility->image) ?>" 
+                                         alt="<?= esc($facility->name) ?>" 
+                                         class="image-preview" 
+                                         id="imagePreview" />
+                                </div>
+                                <?php else: ?>
+                                <div class="mb-3">
+                                    <div class="image-preview bg-gray-100 flex items-center justify-center" id="imagePreview">
+                                        <span class="text-gray-400 flex flex-col items-center">
+                                            <span class="material-icons-round text-4xl">image</span>
+                                            <span>Tidak ada gambar</span>
+                                        </span>
+                                    </div>
+                                </div>
+                                <?php endif; ?>
+                                
+                                <div class="flex items-center gap-3">
+                                    <div class="file-input-wrapper">
+                                        <button type="button" class="px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg text-blue-700 flex items-center gap-1 hover:bg-blue-100 transition-all">
+                                            <span class="material-icons-round text-sm">upload_file</span>
+                                            Pilih Foto
+                                        </button>
+                                        <input type="file" name="image" id="imageInput" accept="image/*" />
+                                    </div>
+                                    <span id="fileNameDisplay" class="text-sm text-gray-600 max-w-[200px] truncate block">Tidak ada file yang dipilih</span>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-1">Format: JPG/PNG, ukuran maks: 2MB</p>
+                            </div>
 
                             <?php foreach (['code','name','address','district','amenity'] as $field): ?>
                                 <div class="mb-4">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1 capitalize"><?= str_replace('_',' ',$field) ?></label>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                                        <?php
+                                            $labels = [
+                                                'code' => 'Kode Fasilitas',
+                                                'name' => 'Nama Fasilitas',
+                                                'address' => 'Alamat',
+                                                'district' => 'Kecamatan',
+                                                'amenity' => 'Jenis Fasilitas'
+                                            ];
+                                            echo $labels[$field];
+                                        ?>
+                                    </label>
                                     <?php if ($field === 'amenity'): ?>
                                         <div class="relative">
                                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
                                                 <span class="material-icons-round text-sm">category</span>
                                             </span>
                                             <select name="<?= $field ?>" required 
-                                                   class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                                    class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                                 <option value="">-- Pilih Jenis --</option>
                                                 <?php 
                                                     $opts = ['Puskesmas','Rumah Sakit','Klinik'];
                                                 ?>
                                                 <?php foreach ($opts as $opt): ?>
                                                     <option value="<?= $opt ?>" <?= $facility->$field === $opt ? 'selected' : '' ?>>
-                                                    <?= $opt ?>
+                                                        <?= $opt ?>
                                                     </option>
                                                 <?php endforeach ?>
                                             </select>
@@ -127,10 +193,13 @@
                                 </div>
                             <?php endforeach ?>
 
+
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <?php foreach (['class','hospital_type'] as $field): ?>
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700 mb-1 capitalize"><?= str_replace('_',' ',$field) ?></label>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                                            <?= $field === 'class' ? 'Kelas' : 'Jenis RS' ?>
+                                        </label>
                                         <div class="relative">
                                             <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
                                                 <span class="material-icons-round text-sm">
@@ -138,7 +207,7 @@
                                                 </span>
                                             </span>
                                             <select name="<?= $field ?>" 
-                                                   class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                                    class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
                                                 <option value="">-- Pilih --</option>
                                                 <?php 
                                                     $opts = ($field==='class') 
@@ -147,13 +216,34 @@
                                                 ?>
                                                 <?php foreach ($opts as $opt): ?>
                                                     <option value="<?= $opt ?>" <?= $facility->$field === $opt ? 'selected' : '' ?>>
-                                                    <?= $opt ?>
+                                                        <?= $opt ?>
                                                     </option>
                                                 <?php endforeach ?>
                                             </select>
                                         </div>
                                     </div>
                                 <?php endforeach ?>
+                            </div>
+
+                           <div class="mb-4">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Penyelenggaraan</label>
+                                <div class="relative">
+                                    <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-500">
+                                        <span class="material-icons-round text-sm">local_hotel</span>
+                                    </span>
+                                    <select name="care_type"
+                                            class="w-full pl-10 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all">
+                                        <option value="">-- Pilih Jenis Perawatan --</option>
+                                        <?php 
+                                            $careTypes = ['Rawat Inap', 'Non Rawat Inap'];
+                                        ?>
+                                        <?php foreach ($careTypes as $type): ?>
+                                            <option value="<?= $type ?>" <?= $facility->care_type === $type ? 'selected' : '' ?>>
+                                                <?= $type ?>
+                                            </option>
+                                        <?php endforeach ?>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4 mb-6">
@@ -232,35 +322,55 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Initialize map
             const latInput = document.getElementById('latInput');
             const lngInput = document.getElementById('lngInput');
             const coordDisplay = document.getElementById('currentCoords');
             const zoomToMarkerBtn = document.getElementById('zoomToMarker');
             const searchBtn = document.getElementById('searchAddress');
             const addressInput = document.getElementById('addressSearch');
+            const imageInput = document.getElementById('imageInput');
+            const fileNameDisplay = document.getElementById('fileNameDisplay');
+            const imagePreview = document.getElementById('imagePreview');
             
-            // Default to Bandung if no coordinates
+            imageInput.addEventListener('change', function() {
+                if (this.files && this.files[0]) {
+                    const file = this.files[0];
+                    fileNameDisplay.textContent = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (imagePreview.tagName === 'IMG') {
+                            imagePreview.src = e.target.result;
+                        } else {
+                            const img = document.createElement('img');
+                            img.src = e.target.result;
+                            img.alt = 'Preview';
+                            img.className = 'image-preview';
+                            img.id = 'imagePreview';
+                            imagePreview.parentNode.replaceChild(img, imagePreview);
+                        }
+                    }
+                    reader.readAsDataURL(file);
+                } else {
+                    fileNameDisplay.textContent = 'Tidak ada file yang dipilih';
+                }
+            });
+            
             const lat = parseFloat(latInput.value) || -6.914744;
             const lng = parseFloat(lngInput.value) || 107.609810;
             
-            // Set initial coordinate display
             coordDisplay.textContent = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
             
-            // Initialize the map
             const map = L.map('map').setView([lat, lng], 13);
             
-            // Add a beautiful tile layer
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             }).addTo(map);
             
-            // Create the marker at initial position
             let marker = L.marker([lat, lng], {
-                draggable: true // Make marker draggable
+                draggable: true
             }).addTo(map);
             
-            // Update coordinates when marker is dragged
             marker.on('dragend', function(e) {
                 const position = marker.getLatLng();
                 latInput.value = position.lat.toFixed(6);
@@ -268,7 +378,6 @@
                 coordDisplay.textContent = `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`;
             });
             
-            // Update marker and coordinates when clicking on the map
             map.on('click', function(e) {
                 marker.setLatLng(e.latlng);
                 latInput.value = e.latlng.lat.toFixed(6);
@@ -276,12 +385,10 @@
                 coordDisplay.textContent = `${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
             });
             
-            // Show current mouse position on map
             map.on('mousemove', function(e) {
                 coordDisplay.textContent = `${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
             });
             
-            // Update marker position when coordinates are changed manually
             latInput.addEventListener('change', updateMarkerFromInputs);
             lngInput.addEventListener('change', updateMarkerFromInputs);
             
@@ -296,20 +403,15 @@
                 }
             }
             
-            // Center map on marker
             zoomToMarkerBtn.addEventListener('click', function() {
                 const position = marker.getLatLng();
                 map.setView(position, 15);
             });
             
-            // Mock search function (in a real app, you would connect to a geocoding service)
             searchBtn.addEventListener('click', function() {
                 const searchText = addressInput.value.trim();
                 if (searchText) {
-                    // This is a mock - in reality you would call a geocoding service
-                    alert(`Searching for: ${searchText}\n\nNote: This is a mock function. In a real application, this would connect to a geocoding service like Nominatim or Google Maps API.`);
-                    
-                    // For demonstration, let's pretend we found something near the current location
+                    alert(`Searching for: ${searchText}\n\nNote: Mock up, gunakan Nomatim atau Gmaps API.`);
                     const mockLat = lat + (Math.random() - 0.5) * 0.05;
                     const mockLng = lng + (Math.random() - 0.5) * 0.05;
                     
@@ -321,14 +423,12 @@
                 }
             });
             
-            // Also trigger search on Enter key
             addressInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     searchBtn.click();
                 }
             });
             
-            // Add map scale
             L.control.scale().addTo(map);
         });
     </script>

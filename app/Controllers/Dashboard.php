@@ -12,7 +12,7 @@ class Dashboard extends Controller
         $session = session();
 
         if (!$session->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'You must log in first.');
+            return redirect()->to('/login')->with('error', 'Anda harus login dulu.');
         }
 
         $model = new MapModel();
@@ -31,7 +31,7 @@ class Dashboard extends Controller
         $session = session();
 
         if (!$session->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'You must log in first.');
+            return redirect()->to('/login')->with('error', 'Anda harus login dulu.');
         }
 
         return view('dashboard/map', [

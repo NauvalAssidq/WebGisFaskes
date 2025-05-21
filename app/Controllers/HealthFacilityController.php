@@ -33,7 +33,7 @@ class HealthFacilityController extends BaseController
     {
         $session = session();
         if (!$session->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'You must log in first.');
+            return redirect()->to('/login')->with('error', 'Anda harus login dulu.');
         }
 
         $facilities = $this->mapModel->getFacilitiesWithCoordinatesByAmenity($amenity);
@@ -46,6 +46,50 @@ class HealthFacilityController extends BaseController
         ]);
     }
 
+    public function create()
+    {
+        $session = session();
+        if (!$session->get('logged_in')) {
+            return redirect()->to('/login')->with('error', 'Anda harus login dulu.');
+        }
+
+        if ($this->request->getMethod() === 'POST') {
+            $post = $this->request->getPost();
+            $image = $this->request->getFile('image');
+            $imageName = null;
+
+            if ($image && $image->isValid() && !$image->hasMoved()) {
+                $imageName = $image->getRandomName();
+                $image->move(FCPATH . 'public/uploads/', $imageName);
+            }
+
+            $data = [
+                'code'          => $post['code'] ?: null,
+                'name'          => $post['name'] ?: null,
+                'address'       => $post['address'] ?: null,
+                'district'      => $post['district'] ?: null,
+                'amenity'       => $post['amenity'] ?: null,
+                'class'         => $post['class'] ?: null,
+                'hospital_type' => $post['hospital_type'] ?: null,
+                'care_type'     => $post['care_type'] ?: null,
+                'lat'           => $post['lat'] !== '' ? (float) $post['lat'] : null,
+                'lng'           => $post['lng'] !== '' ? (float) $post['lng'] : null,
+                'image'         => $imageName
+            ];
+
+            if ($this->mapModel->insert($data)) {
+                return redirect()->back()->with('message', 'Fasilitas berhasil ditambahkan.');
+            } else {
+                return redirect()->back()->with('error', 'Gagal menambah fasilitas.')->withInput();
+            }
+        }
+
+        return view('dashboard/create_facility', [
+            'username' => $session->get('username'),
+            'email'    => $session->get('email'),
+        ]);
+    }
+
     public function edit(int $id)
     {
         $session = session();
@@ -55,15 +99,21 @@ class HealthFacilityController extends BaseController
 
         $facility = $this->mapModel->getFacilityWithCoordinates($id);
 
-
         if (!$facility) {
             throw new PageNotFoundException("Facility dengan ID $id tidak ditemukan.");
         }
 
         if ($this->request->getMethod() === 'POST') {
             $post = $this->request->getPost();
+            $image = $this->request->getFile('image');
+
             log_message('debug', 'POST request detected');
 
+            if ($image && $image->isValid() && !$image->hasMoved()) {
+                $newName = $image->getRandomName();
+                $image->move(FCPATH . 'public/uploads/', $newName);
+                $facility->image = $newName;
+            }
 
             $facility->fill([
                 'code'          => $post['code'] ?: null,
@@ -73,6 +123,7 @@ class HealthFacilityController extends BaseController
                 'amenity'       => $post['amenity'] ?: null,
                 'class'         => $post['class'] ?: null,
                 'hospital_type' => $post['hospital_type'] ?: null,
+                'care_type'     => $post['care_type'] ?: null,
                 'lat'           => $post['lat'] !== '' ? (float) $post['lat'] : null,
                 'lng'           => $post['lng'] !== '' ? (float) $post['lng'] : null,
             ]);

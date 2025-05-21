@@ -1,22 +1,44 @@
 <?php
 
 namespace App\Controllers;
+
 use App\Models\MapModel;
 
 class Main extends BaseController
 {
     public function index()
     {
-        return view('main/index');
+        $session = session();
+
+        return view('main/index', [
+            'username' => $session->get('username'),
+            'email'    => $session->get('email'),
+            'image'    => $session->get('image'),
+            'logged_in'=> $session->get('logged_in'),
+        ]);
     }
-    
+
     public function map()
     {
-        return view('main/map');
+        $session = session();
+
+        return view('main/map', [
+            'username' => $session->get('username'),
+            'email'    => $session->get('email'),
+            'image'    => $session->get('image'),
+            'logged_in'=> $session->get('logged_in'),
+        ]);
     }
-    
+
     public function healthcare_list()
     {
-        return view('main/daftar_faskes');
+        $session = session();
+
+        return view('main/daftar_faskes', [
+            'username' => $session->get('username'),
+            'email'    => $session->get('email'),
+            'image'    => $session->get('image'),
+            'logged_in'=> $session->get('logged_in'),
+        ]);
     }
 }

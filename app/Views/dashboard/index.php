@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>User Dashboard</title>
+    <title>WebGis Faskes | Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -13,7 +13,6 @@
         <?= $this->include('dashboard/layout/header') ?>
         <main class="pl-6 pr-6 pt-6">
             <div class="max-w-full mx-auto">
-                <!-- Header Section -->
                 <div class="flex items-center justify-between mb-8">
                     <div>
                         <h1 class="text-3xl font-bold text-slate-800">Analisis Fasilitas Kesehatan</h1>
@@ -21,16 +20,15 @@
                     </div>
                 </div>
 
-                <!-- Stats Cards -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
                     <?php foreach ($amenityCounts as $row): ?>
-                    <div class="bg-white p-6 rounded-2xl border border-gray-200">
+                    <div class="bg-white p-6 rounded-lg border border-gray-200">
                         <div class="flex items-center justify-between">
                             <div>
                                 <span class="text-sm text-blue-600 font-medium"><?= esc($row['amenity']) ?></span>
                                 <h3 class="text-2xl font-bold text-slate-800 mt-2"><?= esc($row['total']) ?></h3>
                             </div>
-                            <div class="w-12 h-12 bg-blue-100/30 rounded-xl flex items-center justify-center">
+                            <div class="w-12 h-12 bg-blue-100/30 rounded-lg flex items-center justify-center">
                                 <span class="material-icons-round text-blue-600 text-2xl">local_hospital</span>
                             </div>
                         </div>
@@ -38,10 +36,9 @@
                     <?php endforeach; ?>
                 </div>
 
-                <!-- Data Table Section -->   
                 <div>
                     <?php foreach ($groupedFacilities as $amenity => $facilities): ?>
-                        <div class="mb-8 last:mb-0 bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
+                        <div class="mb-8 last:mb-0 bg-white rounded-lg border border-gray-200 overflow-hidden">
                             <div class="px-6 py-5 border-b border-slate-100">
                                 <h2 class="text-xl font-semibold text-slate-800">
                                     Data Tabel <?= esc(ucwords(str_replace('_', ' ', $amenity))) ?>

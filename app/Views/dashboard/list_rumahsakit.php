@@ -1,12 +1,12 @@
-<!-- app/Views/dashboard/list_rumahsakit.php -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
-    <title>Daftar Rumah Sakit</title>
+    <title>WebGis Faskes | Daftar Rumah Sakit</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <script src="<?= base_url('assets/scripts/pagination.js') ?>"></script>
 </head>
 <body class="bg-slate-50 min-h-screen font-[Inter]">
     <?= $this->include('dashboard/layout/sidebar') ?>
@@ -20,15 +20,17 @@
                         <p class="text-slate-500 mt-1">Kelola data Rumah Sakit</p>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-x-auto">
-                    <table class="min-w-full divide-y divide-slate-200">
+                <div class="bg-white rounded-xl border border-gray-200 overflow-x-auto">
+                    <div class="p-4" id="search-container-rs"></div>
+                    <table id="table-rs" class="min-w-full divide-y divide-slate-200">
                         <thead class="bg-slate-100">
                             <tr>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Gambar</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Nama</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Alamat</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Kecamatan</th>
                                 <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Kelas</th>
-                                <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Tipe</th>
+                                <th class="px-6 py-3 text-left text-sm font-medium text-slate-600 uppercase">Jenis</th>
                                 <th class="px-6 py-3 text-center text-sm font-medium text-slate-600 uppercase">Kordinat</th>
                                 <th class="px-6 py-3 text-center text-sm font-medium text-slate-600 uppercase">Aksi</th>
                             </tr>
@@ -36,22 +38,73 @@
                         <tbody class="bg-white divide-y divide-slate-200">
                             <?php foreach ($facilities as $f): ?>
                             <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700">
+                                    <img 
+                                        src="<?= $f->image ? base_url('public/uploads/' . $f->image) : base_url('assets/images/no-image.webp') ?>" 
+                                        alt="<?= esc($f->name ?? 'No Image') ?>" 
+                                        class="w-16 h-16 object-cover rounded-lg" />
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700"><?= esc($f->name) ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700"><?= esc($f->address) ?></td>
+                                <td class="px-6 py-4 max-w-[200px] truncate whitespace-nowrap text-sm text-slate-700" title="<?= esc($f->address) ?>">
+                                    <?= esc($f->address) ?>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700"><?= esc($f->district) ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700"><?= esc($f->class) ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-700"><?= esc($f->hospital_type) ?></td>
-                                <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-slate-700"><?= esc($f->lat) ?> <?= esc($f->lng) ?></td>
-                                <td class="px-6 py-4 text-center whitespace-nowrap text-sm font-medium text-right">
-                                    <a href="<?= site_url('dashboard/edit/' . $f->id) ?>" class="text-blue-600 hover:text-blue-900">Edit</a>
+                                <td class="px-6 py-4 text-center whitespace-nowrap text-sm text-slate-700">
+                                    <div class="inline-flex items-center gap-1 px-2 py-1 border border-gray-300 rounded bg-gray-50 text-xs">
+                                        <span class="text-blue-500 text-base leading-none">•</span>
+                                        <?= number_format($f->lat, 5) ?>, <?= number_format($f->lng, 5) ?>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-right">
+                                    <div class="flex items-center justify-end gap-2 h-full">
+                                        <a href="<?= site_url('dashboard/edit/' . $f->id) ?>" 
+                                        class="inline-flex items-center justify-center w-9 h-9 rounded-md bg-blue-100 hover:bg-blue-200 text-blue-600">
+                                            <span class="material-icons-round text-base">edit</span>
+                                        </a>
+                                        <form action="<?= site_url('dashboard/delete/' . $f->id) ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" 
+                                                    class="inline-flex items-center justify-center w-9 h-9 rounded-md bg-red-100 hover:bg-red-200 text-red-600">
+                                                <span class="material-icons-round text-base">delete</span>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endforeach ?>
                         </tbody>
                     </table>
+                    <div class="p-4" id="pagination-rs"></div>
                 </div>
             </div>
         </main>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = createTableSearch('search-container-rs', 'Search facilities...');
+        
+        const table = document.getElementById('table-rs');
+        const paginationContainer = document.getElementById('pagination-rs');
+        
+        console.log('Table element:', table);
+        console.log('Pagination container:', paginationContainer);
+        console.log('Search input:', searchInput);
+        
+        if (table && paginationContainer && searchInput) {
+            createTablePagination(
+                table, 
+                paginationContainer, 
+                10, 
+                searchInput, 
+                [0, 1, 2] 
+            );
+        } else {
+            console.error('Missing required elements for pagination');
+        }
+    });
+    </script>
 </body>
 </html>

@@ -24,14 +24,16 @@ class MapDashboard extends BaseController
         $districts = $this->request->getGet('district');
         $types     = $this->request->getGet('hospital_type');
         $classes   = $this->request->getGet('hospital_class');
+        $careTypes = $this->request->getGet('care_type');
 
         $amenities = is_array($amenities) ? $amenities : ($amenities ? [$amenities] : []);
         $districts = is_array($districts) ? $districts : ($districts ? [$districts] : []);
         $types     = is_array($types)     ? $types     : ($types     ? [$types]     : []);
         $classes   = is_array($classes)   ? $classes   : ($classes   ? [$classes]   : []);
+        $careTypes = is_array($careTypes) ? $careTypes : ($careTypes ? [$careTypes] : []);
 
         $builder = $this->healthFacilityModel->builder()
-            ->select(['id', 'code', 'name', 'address', 'district', 'amenity', 'class', 'hospital_type', 'lat', 'lng'])
+            ->select(['id', 'code', 'name', 'address', 'district', 'amenity', 'class', 'hospital_type', 'care_type', 'lat', 'lng', 'image'])
             ->where('lat IS NOT NULL')
             ->where('lng IS NOT NULL');
 
@@ -55,10 +57,15 @@ class MapDashboard extends BaseController
             $builder->whereIn('class', $classes);
         }
 
+        if (!empty($careTypes)) {
+            $builder->whereIn('care_type', $careTypes);
+        }
+
         $data = $builder->orderBy('name')->get()->getResultArray();
 
         return $this->response->setJSON($data);
     }
+
 
     public function getAmenitiesList()
     {
@@ -114,6 +121,20 @@ class MapDashboard extends BaseController
             ->where('class IS NOT NULL')
             ->where('class !=', '')
             ->orderBy('class')
+            ->get()
+            ->getResultArray();
+
+        return $this->response->setJSON($data);
+    }
+
+    public function getCareTypes()
+    {
+        $data = $this->healthFacilityModel->builder()
+            ->select('care_type')
+            ->distinct()
+            ->where('care_type IS NOT NULL')
+            ->where('care_type !=', '')
+            ->orderBy('care_type')
             ->get()
             ->getResultArray();
 

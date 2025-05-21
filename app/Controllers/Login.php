@@ -23,23 +23,24 @@ class Login extends Controller
         $user = $model->where('email', $email)->first();
 
         if (!$user) {
-            return redirect()->to('/login')->with('error', 'Email not registered.');
+            return redirect()->to('/login')->with('error', 'Email tidak terdaftar.');
         }
 
-        if (password_verify($password, $user['password'])) {
+       if (password_verify($password, $user['password'])) {
             if ($user['verified']) {
                 $session->set([
                     'user_id'   => $user['id'],
                     'username'  => $user['username'],
                     'email'     => $user['email'],
+                    'image'     => $user['image'] ?? 'default.png',
                     'logged_in' => true,
                 ]);
                 return redirect()->to('dashboard');
             } else {
-                return redirect()->to('/login')->with('error', 'Account not verified.');
+                return redirect()->to('/login')->with('error', 'Akun belum diverifikasi.');
             }
         } else {
-            return redirect()->to('/login')->with('error', 'Incorrect password.');
+            return redirect()->to('/login')->with('error', 'Password salah.');
         }
     }
 
