@@ -42,22 +42,14 @@
                 <div>
                     <?php foreach ($groupedFacilities as $amenity => $facilities): ?>
                         <div class="mb-8 last:mb-0 bg-white rounded-2xl shadow-sm border border-slate-200/60 overflow-hidden">
-                            <!-- New Title -->
                             <div class="px-6 py-5 border-b border-slate-100">
                                 <h2 class="text-xl font-semibold text-slate-800">
                                     Data Tabel <?= esc(ucwords(str_replace('_', ' ', $amenity))) ?>
                                 </h2>
                             </div>
                             <div class="p-6">
-                                <!-- Category Header (optional, you can keep or remove) -->
-                                <div class="flex items-center gap-3 mb-4 px-4 py-2.5 bg-blue-50/50 rounded-lg">
-                                    <span class="material-icons-round text-blue-600 text-xl">category</span>
-                                    <h3 class="text-base font-semibold text-blue-600">
-                                        <?= esc(ucwords(str_replace('_', ' ', $amenity))) ?>
-                                    </h3>
-                                </div>
                                 <div class="overflow-x-auto rounded-lg border border-slate-100">
-                                    <table class="min-w-full divide-y divide-slate-100">
+                                    <table id="table-all" class="min-w-full divide-y divide-slate-100">
                                         <thead class="bg-slate-50">
                                             <tr>
                                                 <th class="px-5 py-3.5 text-left text-sm font-medium text-slate-600">Nama Faskes</th>
@@ -130,14 +122,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return btn;
             };
 
-            // Far Previous <<
             const farPrevBtn = createButton('<<', currentPage === 1, () => {
                 currentPage = 1;
                 updateTable();
                 createPagination();
             });
 
-            // Previous <
             const prevBtn = createButton('<', currentPage === 1, () => {
                 if (currentPage > 1) {
                     currentPage--;
@@ -146,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Next >
             const nextBtn = createButton('>', currentPage === totalPages, () => {
                 if (currentPage < totalPages) {
                     currentPage++;
@@ -155,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Far Next >>
             const farNextBtn = createButton('>>', currentPage === totalPages, () => {
                 currentPage = totalPages;
                 updateTable();
@@ -165,11 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const pageGroup = document.createElement('div');
             pageGroup.className = 'flex gap-1';
 
-            // Calculate visible pages (max 3)
             let startPage = Math.max(1, currentPage - 1);
             let endPage = Math.min(totalPages, startPage + 2);
 
-            // Adjust start if less than 3 pages at the end
             if (endPage - startPage < 2) {
                 startPage = Math.max(1, endPage - 2);
             }

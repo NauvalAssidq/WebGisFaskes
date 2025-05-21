@@ -38,7 +38,7 @@
                  x-transition:leave="transition ease-in duration-75"
                  x-transition:leave-start="opacity-100 scale-100"
                  x-transition:leave-end="opacity-0 scale-95"
-                 class="absolute right-0 mt-[15px] w-48 origin-top-right rounded-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                 class="absolute right-0 mt-[18px] w-48 origin-top-right rounded-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                 <div class="py-1.5">
                     <form action="<?= base_url('login/logout') ?>" method="post">
                         <?= csrf_field() ?>

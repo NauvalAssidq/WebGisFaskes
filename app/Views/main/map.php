@@ -9,11 +9,55 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         #map { height: 600px; width: 100%; }
+        .marker-pin {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            position: relative;
+        }
+        .custom-marker {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .filter-group .filter-item label {
+            cursor: pointer;
+        }
+        .filter-badge {
+            display: inline-flex;
+            align-items: center;
+            background: #e0f2fe;
+            border: 1px solid #7dd3fc;
+            border-radius: 9999px;
+            padding: 2px 8px;
+            margin: 2px;
+            font-size: 0.85rem;
+        }
+        .filter-badge .remove {
+            margin-left: 4px;
+            cursor: pointer;
+            color: #0369a1;
+        }
+        .filter-badge .remove:hover {
+            color: #be123c;
+        }
+        .filter-category {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .filter-category:last-child {
+            border-bottom: none;
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
-    <!-- Include Navbar -->
-    <?= $this->include('main/layout/navbar') ?>
+    <!-- Header Placeholder -->
+    <header class="bg-blue-600 text-white p-4">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-2xl font-bold">WebGIS Faskes Banda Aceh</h1>
+        </div>
+    </header>
 
     <main class="flex-grow">
         <div class="max-w-6xl mx-auto px-4 py-6">
@@ -22,36 +66,91 @@
                 <p class="text-gray-600">Temukan lokasi rumah sakit, puskesmas, klinik, apotek, dan fasilitas kesehatan lainnya.</p>
             </div>
             
-            <!-- Filter bar -->
-            <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 border border-gray-300 p-4 rounded-lg shadow-sm bg-gray-50">
-                <div class="w-full sm:w-5/12">
-                    <input type="text" id="searchInput"
-                        class="w-full border border-gray-400 px-3 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        placeholder="Cari nama fasilitas...">
-                </div>
-                
-                <div class="w-full sm:w-5/12" id="amenityFiltersContainer">
-                    <div class="flex gap-2 mb-2 items-center">
-                        <select class="amenity-filter w-full border border-gray-400 px-3 py-2 rounded bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                            <option value="">-- Semua Jenis Fasilitas --</option>
-                        </select>
-                        <button type="button" onclick="addAmenityFilter()" 
-                                class="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition-colors">
-                            <span class="material-icons text-xl">add</span>
+            <!-- Filter System -->
+            <div class="mb-8">
+                <!-- Search bar -->
+                <div class="w-full mb-4">
+                    <div class="flex">
+                        <input type="text" id="searchInput"
+                            class="w-full border border-gray-400 px-3 py-2 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            placeholder="Cari nama fasilitas...">
+                        <button onclick="searchFacilities()"
+                            class="bg-blue-600 text-white px-4 py-2 rounded-r hover:bg-blue-700 transition flex items-center">
+                            <span class="material-icons">search</span>
                         </button>
                     </div>
                 </div>
-
-                <div class="w-full sm:w-2/12 flex gap-2">
-                    <button onclick="loadMarkers()"
-                        class="w-full flex items-center justify-center gap-2 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-                        <span class="material-icons">search</span>
-                        Cari
-                    </button>
-                    <button onclick="clearFilters()"
-                        class="w-full flex items-center justify-center gap-2 bg-gray-200 text-gray-700 px-4 py-2 rounded hover:bg-gray-300 transition">
-                        <span class="material-icons">refresh</span>
-                    </button>
+                
+                <!-- Filter container -->
+                <div class="border border-gray-300 rounded-lg shadow-sm bg-white">
+                    <!-- Filter Button & Active Filters -->
+                    <div class="p-4 flex flex-wrap items-center gap-2">
+                        <button id="toggleFilterBtn" 
+                            class="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1.5 rounded-md hover:bg-blue-200 transition">
+                            <span class="material-icons text-sm">filter_alt</span>
+                            Filter
+                        </button>
+                        
+                        <div id="activeFilters" class="flex-1 flex flex-wrap items-center">
+                            <!-- Active filters will be shown here as badges -->
+                        </div>
+                        
+                        <button onclick="clearAllFilters()"
+                            class="text-gray-600 hover:text-gray-800 text-sm flex items-center gap-1">
+                            <span class="material-icons text-sm">refresh</span>
+                            Reset
+                        </button>
+                    </div>
+                    
+                    <!-- Expandable Filter Panel -->
+                    <div id="filterPanel" class="hidden border-t border-gray-200 p-4 bg-gray-50">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Jenis Fasilitas -->
+                            <div class="filter-category">
+                                <h3 class="font-bold text-gray-800 mb-2">Jenis Fasilitas</h3>
+                                <div id="amenityFilters" class="flex flex-wrap gap-2">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                            </div>
+                            
+                            <!-- Kecamatan -->
+                            <div class="filter-category">
+                                <h3 class="font-bold text-gray-800 mb-2">Kecamatan</h3>
+                                <div id="districtFilters" class="flex flex-wrap gap-2">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                            </div>
+                            
+                            <!-- Tipe Rumah Sakit -->
+                            <div class="filter-category">
+                                <h3 class="font-bold text-gray-800 mb-2">Tipe Rumah Sakit</h3>
+                                <div id="hospitalTypeFilters" class="flex flex-wrap gap-2">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                            </div>
+                            
+                            <!-- Kelas Rumah Sakit -->
+                            <div class="filter-category">
+                                <h3 class="font-bold text-gray-800 mb-2">Kelas Rumah Sakit</h3>
+                                <div id="hospitalClassFilters" class="flex flex-wrap gap-2">
+                                    <!-- Will be populated dynamically -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Apply Button -->
+                        <div class="mt-4 flex justify-end">
+                            <button onclick="applyFilters()" 
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                                Terapkan Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Facility Count -->
+                <div class="text-sm text-gray-600 mt-4">
+                    Menampilkan <span id="facilityCount" class="font-bold">0</span> fasilitas kesehatan
                 </div>
             </div>
             
@@ -83,6 +182,9 @@
         </div>
     </main>
 
-    <?= $this->include('main/layout/footer') ?>
-</body>
-</html>
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white p-4 mt-8">
+        <div class="max-w-6xl mx-auto text-center">
+            <p>© 2025 WebGIS Fasilitas Kesehatan Banda Aceh</p>
+        </div>
+    </footer>
