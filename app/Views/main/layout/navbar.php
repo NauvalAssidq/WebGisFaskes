@@ -1,7 +1,7 @@
 <style>[x-cloak] { display: none !important; }</style>
 <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-<nav class="sticky top-0 bg-white border-b border-gray-300 shadow-sm z-50" x-data="{ mobileOpen: false, profileOpen: false }">
+<nav class="sticky top-0 bg-white border-b border-gray-300 shadow-sm" style="z-index: 1000" x-data="{ mobileOpen: false, profileOpen: false }">
     <div class="max-w-6xl mx-auto px-4">
         <div class="flex justify-between h-16 items-center">
             <!-- Logo + Navigation -->
